@@ -221,7 +221,34 @@
 
           status.textContent =
             "🔔 通知が有効になりました！";
+          
+const GAS_URL =
+  "https://script.google.com/macros/s/AKfycbyV22VqALNmsFxMLn3klyqJW-KhvhmCEh4rWisE1_lM2KiN2OLCMJDjSFoLryWIS2AsLA/exec";
 
+const response =
+  await fetch(GAS_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify({
+      token: token
+    })
+  });
+
+const result =
+  await response.json();
+
+console.log(
+  "GAS Token保存結果:",
+  result
+);
+
+if (!result.success) {
+  throw new Error(
+    result.error || "Token保存に失敗しました"
+  );
+}
 
           alert(
             "🔔 通知を有効にしました！\n\nFCM Tokenを取得しました。"
