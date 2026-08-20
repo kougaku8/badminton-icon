@@ -16,3 +16,35 @@ firebase.initializeApp({
 });
 
 const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage(function(payload) {
+
+  console.log(
+    "[firebase-messaging-sw.js] Background message:",
+    payload
+  );
+
+  const notificationTitle =
+    payload.notification?.title ||
+    "🏸 羽球活動";
+
+  const notificationOptions = {
+
+    body:
+      payload.notification?.body ||
+      "新しい通知があります",
+
+    icon:
+      "https://kougaku8.github.io/badminton-icon/heian-bado-yoyaku-icon_512.png",
+
+    badge:
+      "https://kougaku8.github.io/badminton-icon/heian-bado-yoyaku-icon_512.png"
+
+  };
+
+  self.registration.showNotification(
+    notificationTitle,
+    notificationOptions
+  );
+
+});
