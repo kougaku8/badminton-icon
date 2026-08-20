@@ -1,40 +1,269 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>羽球活動 通知テスト</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>🏸 羽球活動 通知設定</title>
 </head>
 
 <body>
 
   <h1>🏸 羽球活動</h1>
 
-  <p>Firebase 通知テストページ</p>
+  <p>
+    Firebase Cloud Messaging 通知テスト
+  </p>
 
-  <button id="notificationButton">
+  <button
+    id="notificationButton"
+    type="button"
+  >
     🔔 通知を有効にする
   </button>
 
-  <script>
-    document
-      .getElementById("notificationButton")
-      .addEventListener("click", async function () {
+  <p id="status"></p>
 
-        const permission =
-          await Notification.requestPermission();
 
-        alert(
-          "通知権限: " + permission
-        );
+  <script type="module">
 
-        console.log(
-          "Notification permission:",
-          permission
-        );
+    /* =====================================================
+       Firebase
+    ===================================================== */
 
-      });
+    import {
+      initializeApp
+    } from
+      "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+
+    import {
+      getMessaging,
+      getToken
+    } from
+      "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
+
+
+    /* =====================================================
+       Firebase 設定
+    ===================================================== */
+
+    const firebaseConfig = {
+
+      apiKey:
+        "AIzaSyD6uQto_5BYZJDgkaI8CBGaOQkXMgrCk",
+
+      authDomain:
+        "badminton-notification.firebaseapp.com",
+
+      projectId:
+        "badminton-notification",
+
+      storageBucket:
+        "badminton-notification.firebasestorage.app",
+
+      messagingSenderId:
+        "419794096766",
+
+      appId:
+        "1:419794096766:web:9dd990fe827719d149fe2f"
+
+    };
+
+
+    /* =====================================================
+       Firebase 初期化
+    ===================================================== */
+
+    const app =
+      initializeApp(firebaseConfig);
+
+
+    const messaging =
+      getMessaging(app);
+
+
+    /* =====================================================
+       VAPID 公開鍵
+    ===================================================== */
+
+    const vapidKey =
+      "BEzm7tEPH4F7nr5saymZsJqdnF_h_DlTZWgXsN6cDOjb4VVJIGseCnJLPwW37ko_uulqKjhPtjlg-9kYHjTzSJI";
+
+
+    /* =====================================================
+       HTML
+    ===================================================== */
+
+    const button =
+      document.getElementById(
+        "notificationButton"
+      );
+
+
+    const status =
+      document.getElementById(
+        "status"
+      );
+
+
+    /* =====================================================
+       通知設定
+    ===================================================== */
+
+    button.addEventListener(
+      "click",
+      async function () {
+
+        try {
+
+          button.disabled = true;
+
+          status.textContent =
+            "通知設定を開始しています……";
+
+
+          /* ---------------------------------------------
+             1. 通知許可
+          --------------------------------------------- */
+
+          const permission =
+            await Notification.requestPermission();
+
+
+          console.log(
+            "Notification permission:",
+            permission
+          );
+
+
+          if (
+            permission !== "granted"
+          ) {
+
+            status.textContent =
+              "通知権限: " + permission;
+
+            button.disabled = false;
+
+            return;
+
+          }
+
+
+          /* ---------------------------------------------
+             2. Service Worker登録
+          --------------------------------------------- */
+
+          const registration =
+            await navigator.serviceWorker.register(
+              "/badminton-icon/firebase-messaging-sw.js"
+            );
+
+
+          console.log(
+            "Service Worker 登録完了:",
+            registration
+          );
+
+
+          /* ---------------------------------------------
+             3. FCM Token取得
+          --------------------------------------------- */
+
+          const token =
+            await getToken(
+              messaging,
+              {
+                vapidKey:
+                  vapidKey,
+
+                serviceWorkerRegistration:
+                  registration
+              }
+            );
+
+
+          if (!token) {
+
+            throw new Error(
+              "FCM Tokenを取得できませんでした"
+            );
+
+          }
+
+
+          /* ---------------------------------------------
+             4. Token表示
+          --------------------------------------------- */
+
+          console.log(
+            "================================="
+          );
+
+          console.log(
+            "FCM TOKEN:"
+          );
+
+          console.log(
+            token
+          );
+
+          console.log(
+            "================================="
+          );
+
+
+          status.textContent =
+            "🔔 通知が有効になりました！";
+
+
+          alert(
+            "🔔 通知を有効にしました！\n\nFCM Tokenを取得しました。"
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Firebase通知エラー:",
+            error
+          );
+
+
+          status.textContent =
+            "エラー: " +
+            (
+              error.message ||
+              error
+            );
+
+
+          alert(
+            "通知設定中にエラーが発生しました：\n\n" +
+            (
+              error.message ||
+              error
+            )
+          );
+
+
+        } finally {
+
+          button.disabled = false;
+
+        }
+
+      }
+    );
+
   </script>
 
 </body>
+
 </html>
