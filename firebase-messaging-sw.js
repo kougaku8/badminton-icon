@@ -36,6 +36,8 @@ messaging.onBackgroundMessage(function(payload) {
       ? payload.notification.body
       : "新しい通知があります";
 
+  console.log("通知表示を実行します");
+  
   self.registration.showNotification(
     title,
     {
