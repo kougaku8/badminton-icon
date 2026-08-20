@@ -17,6 +17,7 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+
 messaging.onBackgroundMessage(function(payload) {
 
   console.log(
@@ -24,27 +25,32 @@ messaging.onBackgroundMessage(function(payload) {
     payload
   );
 
-  const notificationTitle =
-    payload.notification?.title ||
-    "🏸 羽球活動";
+  const title =
+    payload.notification &&
+    payload.notification.title
+      ? payload.notification.title
+      : "🏸 羽球活動";
 
-  const notificationOptions = {
+  const body =
+    payload.notification &&
+    payload.notification.body
+      ? payload.notification.body
+      : "新しい通知があります";
 
-    body:
-      payload.notification?.body ||
-      "新しい通知があります",
-
-    icon:
-      "https://kougaku8.github.io/badminton-icon/heian-bado-yoyaku-icon_512.png",
-
-    badge:
-      "https://kougaku8.github.io/badminton-icon/heian-bado-yoyaku-icon_512.png"
-
-  };
 
   self.registration.showNotification(
-    notificationTitle,
-    notificationOptions
+    title,
+    {
+      body: body,
+
+      icon:
+        "https://kougaku8.github.io/badminton-icon/heian-bado-yoyaku-icon_512.png",
+
+      badge:
+        "https://kougaku8.github.io/badminton-icon/heian-bado-yoyaku-icon_512.png",
+
+      requireInteraction: false
+    }
   );
 
 });
