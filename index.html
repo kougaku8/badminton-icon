@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽球活動 通知テスト</title>
+</head>
+
+<body>
+
+  <h1>🏸 羽球活動</h1>
+
+  <p>Firebase 通知テストページ</p>
+
+  <button id="notificationButton">
+    🔔 通知を有効にする
+  </button>
+
+  <script>
+    document
+      .getElementById("notificationButton")
+      .addEventListener("click", async function () {
+
+        const permission =
+          await Notification.requestPermission();
+
+        alert(
+          "通知権限: " + permission
+        );
+
+        console.log(
+          "Notification permission:",
+          permission
+        );
+
+      });
+  </script>
+
+</body>
+</html>
