@@ -36,30 +36,13 @@ messaging.onBackgroundMessage(function(payload) {
       ? payload.notification.body
       : "新しい通知があります";
 
-  console.log("通知表示を実行します");
-  
-self.registration.showNotification(
-  title,
-  {
-    body: body,
-    icon:
-      "https://kougaku8.github.io/badminton-icon/heian-bado-yoyaku-icon_512.png"
-  }
-)
-.then(function () {
-
-  console.log(
-    "[FCM] showNotification 成功"
+  self.registration.showNotification(
+    title,
+    {
+      body: body,
+      icon:
+        "https://kougaku8.github.io/badminton-icon/heian-bado-yoyaku-icon_512.png"
+    }
   );
 
-})
-.catch(function (error) {
-
-  console.error(
-    "[FCM] showNotification 失敗:",
-    error
-  );
-
-　});
 });
-
